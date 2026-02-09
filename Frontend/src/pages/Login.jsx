@@ -21,8 +21,11 @@ const Login = () => {
       const res = await login(formData);
       localStorage.setItem("token", res.data.token);
       alert("Login successful");
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
       navigate("/dashboard");
-    } catch (err) {
+    }
+     catch (err) {
       alert(err.response?.data?.message || "Login failed");
     }
   };

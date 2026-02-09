@@ -51,6 +51,12 @@ const Signup = () => {
           required
           onChange={handleChange}
         />
+        <select name="role" required onChange={handleChange}>
+  <option value="">Select Role</option>
+  <option value="student">Student</option>
+  <option value="faculty">Faculty</option>
+</select>
+
         <button type="submit">Signup</button>
         <p>
   Already have an account? <a href="/login">Login</a>

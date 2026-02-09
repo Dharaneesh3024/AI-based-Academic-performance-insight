@@ -1,14 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
+
 const DashboardPage = () => {
-  const logout = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    navigate("/login");
   };
+  const role = localStorage.getItem("role");
+
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h1>Welcome to Dashboard 🎉</h1>
-      <button onClick={logout}>Logout</button>
-    </div>
+    <h1>
+  {role === "faculty" ? "Faculty Dashboard" : "Student Dashboard"}
+</h1>
   );
 };
 
