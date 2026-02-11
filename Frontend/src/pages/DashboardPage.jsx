@@ -1,20 +1,11 @@
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
+import Navbar from "../components/Navbar";
 
 const DashboardPage = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-  const role = localStorage.getItem("role");
-
-
+  // const role = localStorage.getItem("role");
   return (
-    <h1>
-  {role === "faculty" ? "Faculty Dashboard" : "Student Dashboard"}
-</h1>
+  <Navbar/>
   );
 };
 

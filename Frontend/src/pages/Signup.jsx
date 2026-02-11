@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { signup } from "../services/auth";
 import { useNavigate } from "react-router-dom";
-
+import "./Login.css"
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -27,6 +27,8 @@ const Signup = () => {
   };
 
   return (
+        <div className="auth-page">
+
     <div className="auth-container">
       <h2>Signup</h2>
       <form onSubmit={handleSubmit}>
@@ -62,6 +64,7 @@ const Signup = () => {
   Already have an account? <a href="/login">Login</a>
 </p>
       </form>
+    </div>
     </div>
   );
 };

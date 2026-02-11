@@ -2,7 +2,7 @@ import { useState } from "react";
 import { login } from "../services/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import "./Login.css"
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -31,6 +31,7 @@ const Login = () => {
   };
 
   return (
+    <div className="auth-page">
     <div className="auth-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
@@ -53,6 +54,7 @@ const Login = () => {
   Don’t have an account? <a href="/signup">Signup</a>
 </p>
       </form>
+    </div>
     </div>
   );
 };
