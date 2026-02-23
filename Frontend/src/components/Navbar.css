@@ -1,40 +1,107 @@
+/* Modern Design System Tokens for Navbar */
+:root {
+  --nav-bg: #111827;
+  --nav-accent: #3b82f6;
+  --nav-danger: #ef4444;
+  --nav-danger-hover: #dc2626;
+  --glass-nav: rgba(17, 24, 39, 0.8);
+}
+
 .navbar {
-  height: 64px;
-  background: #1e293b;
+  height: 80px;
+  background: var(--glass-nav);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
 }
 
 .navbar h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .role-badge {
-  background: #334155;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  text-transform: capitalize;
 }
 
 .logout-btn {
-  background: #ef4444;
+  background: var(--nav-danger);
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 10px;
   color: white;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
 .logout-btn:hover {
-  background: #dc2626;
+  background: var(--nav-danger-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+}
+
+.nav-back-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-right: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.nav-back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-4px);
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 20px;
+    height: 70px;
+  }
+
+  .navbar h2 {
+    font-size: 1.1rem;
+  }
 }

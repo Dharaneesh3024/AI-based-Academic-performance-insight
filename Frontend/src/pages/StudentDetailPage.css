@@ -130,3 +130,48 @@ th {
   height: 350px;      /* controls height */
   margin: 0 auto;     /* center it */
 }
+.risk-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.risk-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.risk-score {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.risk-badge {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.risk-badge.green {
+  background: #22c55e;
+}
+
+.risk-badge.orange {
+  background: #f59e0b;
+}
+
+.risk-badge.red {
+  background: #ef4444;
+}
+.risk-score {
+  font-size: 42px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}

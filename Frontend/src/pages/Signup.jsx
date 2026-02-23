@@ -27,44 +27,51 @@ const Signup = () => {
   };
 
   return (
-        <div className="auth-page">
+    <div className="auth-page">
+      <div className="auth-container">
+        <h2>Create Account</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              required
+              onChange={handleChange}
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              required
+              onChange={handleChange}
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+              onChange={handleChange}
+            />
+          </div>
+          <div className="input-group">
+            <select name="role" required onChange={handleChange} defaultValue="">
+              <option value="" disabled>Select Your Role</option>
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
 
-    <div className="auth-container">
-      <h2>Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-          onChange={handleChange}
-        />
-        <select name="role" required onChange={handleChange}>
-  <option value="">Select Role</option>
-  <option value="student">Student</option>
-  <option value="faculty">Faculty</option>
-</select>
-
-        <button type="submit">Signup</button>
-        <p>
-  Already have an account? <a href="/login">Login</a>
-</p>
-      </form>
-    </div>
+          <button type="submit">Sign Up</button>
+          <p>
+            Already have an account? <a href="/login">Login</a>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };
