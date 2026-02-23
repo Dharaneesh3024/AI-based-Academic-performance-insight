@@ -9,17 +9,25 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar, Radar } from "react-chartjs-2";
 import "./StudentDetailPage.css";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
   Title,
   Tooltip,
   Legend
@@ -72,6 +80,25 @@ const StudentDetailPage = () => {
     }
   }
 
+  // -------- AI RECOMMENDATION LOGIC --------
+  const getRecommendation = () => {
+    if (!student) return null;
+    const insights = [];
+    const avgMarks = student.subjects.reduce((acc, s) => acc + s.marks, 0) / student.subjects.length;
+    const avgAttendance = student.subjects.reduce((acc, s) => acc + s.attendance, 0) / student.subjects.length;
+
+    if (avgMarks < 50) insights.push("Focus on core concepts through additional tutoring sessions.");
+    if (avgAttendance < 75) insights.push("Attendance is below threshold; regular presence is critical for improvement.");
+    if (avgMarks > 85 && avgAttendance > 85) insights.push("Exceptional performance; consider advanced research projects.");
+
+    const lowSubjects = student.subjects.filter(s => s.marks < 40).map(s => s.name);
+    if (lowSubjects.length > 0) insights.push(`Urgent attention needed in: ${lowSubjects.join(", ")}.`);
+
+    return insights.length > 0 ? insights : ["Maintain current study patterns and monitor weekly progress."];
+  };
+
+  const recommendations = getRecommendation();
+
   // -------- ANIMATED COUNTER --------
   useEffect(() => {
     if (!student) return;
@@ -104,7 +131,11 @@ const StudentDetailPage = () => {
       {
         label: "Marks",
         data: student.subjects.map((sub) => sub.marks),
-        backgroundColor: "#3b82f6",
+        backgroundColor: "rgba(99, 102, 241, 0.8)",
+        borderColor: "#6366f1",
+        borderWidth: 2,
+        borderRadius: 8,
+        hoverBackgroundColor: "rgba(99, 102, 241, 1)",
       },
     ],
   };
@@ -112,9 +143,63 @@ const StudentDetailPage = () => {
   const barOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: { color: "rgba(255, 255, 255, 0.05)" },
+        ticks: { color: "#94a3b8" },
+      },
+      x: {
+        grid: { display: false },
+        ticks: { color: "#94a3b8" },
+      },
+    },
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Marks Performance" },
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "Marks Performance",
+        color: "#f8fafc",
+        font: { size: 14, weight: '700' }
+      },
+    },
+  };
+
+  // -------- RADAR CHART DATA --------
+  const radarData = {
+    labels: student.subjects.map((sub) => sub.name),
+    datasets: [
+      {
+        label: "Marks",
+        data: student.subjects.map((sub) => sub.marks),
+        backgroundColor: "rgba(99, 102, 241, 0.2)",
+        borderColor: "#6366f1",
+        pointBackgroundColor: "#6366f1",
+      },
+      {
+        label: "Attendance",
+        data: student.subjects.map((sub) => sub.attendance),
+        backgroundColor: "rgba(16, 185, 129, 0.2)",
+        borderColor: "#10b981",
+        pointBackgroundColor: "#10b981",
+      },
+    ],
+  };
+
+  const radarOptions = {
+    scales: {
+      r: {
+        angleLines: { color: "rgba(255, 255, 255, 0.1)" },
+        grid: { color: "rgba(255, 255, 255, 0.1)" },
+        pointLabels: { color: "#94a3b8", font: { size: 11 } },
+        ticks: { backdropColor: "transparent", color: "#64748b", z: 10 },
+        suggestedMin: 0,
+        suggestedMax: 100,
+      },
+    },
+    plugins: {
+      legend: { labels: { color: "#f8fafc" } },
     },
   };
 
@@ -126,29 +211,36 @@ const StudentDetailPage = () => {
         {/* PROFILE CARD */}
         <motion.div
           className="profile-card"
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
         >
-          <h2>{student.name}</h2>
-          <div className="profile-info">
-            <p><strong>Roll No:</strong> {student.rollNo}</p>
-            <p><strong>Department:</strong> {student.department}</p>
-            <p><strong>Semester:</strong> {student.semester}</p>
+          <div className="profile-header">
+            <h2>{student.name}</h2>
+            <div className="profile-info">
+              <p><strong>Roll Number</strong> {student.rollNo}</p>
+              <p><strong>Department</strong> {student.department}</p>
+              <p><strong>Current Semester</strong> {student.semester}</p>
+            </div>
           </div>
         </motion.div>
 
         {/* AI RISK CARD */}
         <motion.div
           className="risk-card"
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3>AI Risk Analysis</h3>
+          <h3>AI Academic Risk Analysis</h3>
           <div className="risk-content">
-            <div className="risk-score">
-              {displayRisk}%
+            <div className={`risk-score ${riskColor}`}>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {displayRisk}%
+              </motion.span>
             </div>
             <div className={`risk-badge ${riskColor}`}>
               {riskLevel}
@@ -159,38 +251,118 @@ const StudentDetailPage = () => {
         {/* MARKS CHART */}
         <motion.div
           className="chart-card"
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
         >
           <div className="chart-wrapper">
             <Bar data={barData} options={barOptions} />
           </div>
         </motion.div>
 
+        {/* AI RECOMMENDATION CARD */}
+        <motion.div
+          className="recommendation-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="card-header">
+            <span className="ai-sparkle">✨</span>
+            <h3>AI Recommendations</h3>
+          </div>
+          <div className="recommendation-list">
+            {recommendations.map((rec, idx) => (
+              <div key={idx} className="rec-item">
+                <p>{rec}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* RADAR CHART CARD */}
+        <motion.div
+          className="radar-card"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          <h3>Holistic Performance</h3>
+          <div className="radar-wrapper">
+            <Radar data={radarData} options={radarOptions} />
+          </div>
+        </motion.div>
+
         {/* ATTENDANCE SECTION */}
         <motion.div
           className="attendance-card"
-          initial={{ opacity: 0, x: 50 }}
+          initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <h3>Attendance Overview</h3>
+          <h3>Attendance Insights</h3>
           {student.subjects.map((sub, index) => (
             <div key={index} className="attendance-item">
               <div className="attendance-label">
-                {sub.name} — {sub.attendance}%
+                <span>{sub.name}</span>
+                <span>{sub.attendance}%</span>
               </div>
               <div className="progress-bar">
-                <div
-                  className={`progress-fill ${
-                    sub.attendance >= 75 ? "good" : "risk"
-                  }`}
-                  style={{ width: `${sub.attendance}%` }}
-                ></div>
+                <motion.div
+                  className={`progress-fill ${sub.attendance >= 75 ? "good" : "risk"
+                    }`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${sub.attendance}%` }}
+                  transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
+                ></motion.div>
               </div>
             </div>
           ))}
+        </motion.div>
+
+        {/* SUBJECT BREAKDOWN TABLE */}
+        <motion.div
+          className="table-card"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <h3>Detailed Subject Breakdown</h3>
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Marks</th>
+                  <th>Attendance</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {student.subjects.map((sub, idx) => {
+                  let status = "Needs Attention";
+                  let statusClass = "risk";
+                  if (sub.marks > 75 && sub.attendance > 75) {
+                    status = "Excellent";
+                    statusClass = "good";
+                  } else if (sub.marks > 50 && sub.attendance > 60) {
+                    status = "Stable";
+                    statusClass = "stable";
+                  }
+                  return (
+                    <tr key={idx}>
+                      <td>{sub.name}</td>
+                      <td>{sub.marks}%</td>
+                      <td>{sub.attendance}%</td>
+                      <td>
+                        <span className={`status-badge ${statusClass}`}>{status}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </motion.div>
 
       </div>

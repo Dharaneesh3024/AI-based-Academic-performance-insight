@@ -7,7 +7,12 @@
 }
 
 /* Page background */
-body {
+body,
+html {
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
+  background-color: #0f172a;
+  /* Match the theme's base color */
+  color: #f8fafc;
 }
-

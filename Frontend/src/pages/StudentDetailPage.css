@@ -1,177 +1,362 @@
+/* Modern Design System Tokens */
+:root {
+  --page-bg: #0f172a;
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --primary-accent: #6366f1;
+  --secondary-accent: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .student-detail-container {
-  padding: 30px;
-  background-color: #f5f7fa;
-  min-height: 100vh;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  background: var(--page-bg);
+  color: var(--text-primary);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
 }
 
 .loading {
   text-align: center;
-  margin-top: 50px;
+  margin-top: 100px;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
 }
 
-/* Profile Card */
+/* Glass Card Base */
+.profile-card,
+.risk-card,
+.chart-card,
+.attendance-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  height: 100%;
+}
+
+/* Profile Card - Full Width */
 .profile-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .profile-card h2 {
-  margin-bottom: 15px;
-  color: #2c3e50;
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .profile-info {
   display: flex;
   gap: 40px;
-  flex-wrap: wrap;
-  font-size: 16px;
 }
 
-/* Subjects Card */
-.subjects-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+.profile-info p {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.subjects-card h3 {
-  margin-bottom: 20px;
-  color: #2c3e50;
+.profile-info strong {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* Table Styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #1f2937;
-  color: white;
-}
-
-th, td {
-  padding: 12px;
+/* Risk Card */
+.risk-card {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f3f4f6;
-}
-
-tbody tr:hover {
-  background-color: #e5e7eb;
-  transition: 0.2s ease;
-}
-
-th {
+.risk-card h3 {
+  margin-bottom: 25px;
+  color: var(--text-secondary);
   font-weight: 600;
 }
-.student-detail-container {
-  padding: 30px;
-  background: #f4f6f9;
-  min-height: 100vh;
-}
 
-.profile-card,
-.chart-card,
-.attendance-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
-}
-
-.profile-info {
+.risk-content {
   display: flex;
-  gap: 40px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-/* Attendance Section */
+.risk-score {
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.risk-badge {
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.risk-badge.green {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.risk-badge.orange {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.risk-badge.red {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Chart Card */
+.chart-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-wrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 300px;
+}
+
+/* Attendance Card */
+.attendance-card h3 {
+  margin-bottom: 25px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
 .attendance-item {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .attendance-label {
-  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
   font-weight: 500;
+}
+
+.attendance-label span:last-child {
+  color: var(--text-secondary);
 }
 
 .progress-bar {
   width: 100%;
-  height: 12px;
-  background: #e5e7eb;
-  border-radius: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  border-radius: 8px;
-  transition: width 0.5s ease-in-out;
+  border-radius: 99px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
 }
 
 .progress-fill.good {
-  background: #22c55e;
+  background: linear-gradient(90deg, #10b981, #34d399);
 }
 
 .progress-fill.risk {
-  background: #ef4444;
-}
-.chart-wrapper {
-  width: 100%;
-  max-width: 600px;   /* controls width */
-  height: 350px;      /* controls height */
-  margin: 0 auto;     /* center it */
-}
-.risk-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
-  text-align: center;
+  background: linear-gradient(90deg, #ef4444, #f87171);
 }
 
-.risk-content {
+/* Recommendation Card */
+.recommendation-card {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  padding: 30px;
+  border-radius: 24px;
+  backdrop-filter: blur(12px);
+}
+
+.recommendation-card .card-header {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 40px;
-  margin-top: 15px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.risk-score {
-  font-size: 40px;
-  font-weight: bold;
+.ai-sparkle {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.8));
 }
 
-.risk-badge {
-  padding: 10px 20px;
-  border-radius: 20px;
+.recommendation-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.rec-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 15px 20px;
+  border-radius: 12px;
+  border-left: 3px solid var(--primary-accent);
+}
+
+.rec-item p {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Radar Card */
+.radar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radar-wrapper {
+  width: 100%;
+  max-width: 450px;
+  margin-top: 20px;
+}
+
+/* Table Card */
+.table-card {
+  grid-column: span 2;
+}
+
+.table-wrapper {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+th {
+  text-align: left;
+  padding: 15px 20px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+td {
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+td:first-child {
+  border-radius: 12px 0 0 12px;
   font-weight: 600;
-  color: white;
 }
 
-.risk-badge.green {
-  background: #22c55e;
+td:last-child {
+  border-radius: 0 12px 12px 0;
 }
 
-.risk-badge.orange {
-  background: #f59e0b;
+tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.risk-badge.red {
-  background: #ef4444;
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
-.risk-score {
-  font-size: 42px;
-  font-weight: bold;
-  transition: color 0.3s ease;
+
+.status-badge.good {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.status-badge.stable {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+}
+
+.status-badge.risk {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* Charts Shared */
+.chart-card h3,
+.radar-card h3,
+.attendance-card h3,
+.table-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .student-detail-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .profile-card {
+    grid-column: span 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .profile-info {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
