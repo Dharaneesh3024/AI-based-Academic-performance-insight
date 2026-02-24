@@ -1,68 +1,194 @@
+.student-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  color: #f8fafc;
+}
 
+.dashboard-welcome {
+  margin-bottom: 2.5rem;
+}
 
-/* Header */
-.dashboard-header {
+.dashboard-welcome h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-welcome .highlight {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard-welcome p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+/* Stats Strip */
+.stats-strip {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  flex: 1;
+  min-width: 250px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.stat-pill:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.stat-pill.blue .stat-value {
+  color: #818cf8;
+}
+
+.stat-pill.green .stat-value {
+  color: #34d399;
+}
+
+.stat-pill.purple .stat-value {
+  color: #c084fc;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.grid-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.grid-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #e2e8f0;
+}
+
+/* AI Insights specific */
+.ai-insights {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05));
+  border: 1px solid rgba(168, 85, 247, 0.1);
+}
+
+.ai-insights ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ai-insights li {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 3px solid #a855f7;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.sparkle {
+  margin-right: 0.5rem;
+}
+
+/* Attendance chart */
+.attendance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.att-info {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.att-bar-bg {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.att-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.att-bar-fill.good {
+  background: #10b981;
+}
+
+.att-bar-fill.warning {
+  background: #f59e0b;
+}
+
+.chart-container,
+.radar-container {
+  height: 300px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .student-dashboard {
+    padding: 1rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-welcome h1 {
+    font-size: 2rem;
+  }
+}
+
+.loading-screen,
+.error-screen {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
-}
-
-.dashboard-header h1 {
-  color: #333;
-}
-
-/* Cards layout */
-.cards-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-/* Card base */
-.card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card h3 {
-  color: #555;
-  margin-bottom: 10px;
-}
-
-.card p {
-  font-size: 28px;
-  font-weight: bold;
-  color: #2b6cb0;
-}
-
-/* Variants */
-.card.success p {
-  color: #2f855a;
-}
-
-.card.warning p {
-  color: #c53030;
-}
-
-/* Logout button */
-.logout-btn {
-  padding: 8px 16px;
-  background: #ff4d4f;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.logout-btn:hover {
-  background: #e63946;
+  height: 60vh;
+  font-size: 1.2rem;
+  color: #94a3b8;
 }

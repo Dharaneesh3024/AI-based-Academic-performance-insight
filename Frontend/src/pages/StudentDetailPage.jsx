@@ -66,17 +66,17 @@ const StudentDetailPage = () => {
       student.subjects.length;
 
     riskScore = 100 - (avgMarks * 0.6 + avgAttendance * 0.4);
-    riskScore = Math.max(0, Math.min(100, riskScore));
+    riskScore = 100 - (Math.max(0, Math.min(100, riskScore)));
 
     if (riskScore < 35) {
-      riskLevel = "LOW RISK";
-      riskColor = "green";
+      riskLevel = "HIGH RISK";
+      riskColor = "red";
     } else if (riskScore < 65) {
       riskLevel = "MEDIUM RISK";
       riskColor = "orange";
     } else {
-      riskLevel = "HIGH RISK";
-      riskColor = "red";
+      riskLevel = "LOW RISK";
+      riskColor = "green";
     }
   }
 
@@ -232,7 +232,7 @@ const StudentDetailPage = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3>AI Academic Risk Analysis</h3>
+          <h3>AI Academic Performance Analysis</h3>
           <div className="risk-content">
             <div className={`risk-score ${riskColor}`}>
               <motion.span

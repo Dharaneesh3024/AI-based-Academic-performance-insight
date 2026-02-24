@@ -4,15 +4,17 @@ const jwt = require("jsonwebtoken");
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, rollNo } = req.body;
 
     if (!role) {
       return res.status(400).json({ message: "Role is required" });
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      $or: [{ email }, { rollNo: rollNo || undefined }]
+    });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists with this email or roll number" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,7 +23,8 @@ exports.signup = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role
+      role,
+      rollNo
     });
 
     res.status(201).json({ message: "Signup successful" });
@@ -32,9 +35,14 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, rollNo, password } = req.body;
 
-    const user = await User.findOne({ email });
+    // Support both email and rollNo identifier
+    const identifier = email || rollNo;
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { rollNo: identifier }]
+    });
+
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -45,14 +53,15 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, rollNo: user.rollNo },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     res.json({
       token,
-      role: user.role
+      role: user.role,
+      rollNo: user.rollNo
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
