@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import StudentDetailPage from "./pages/StudentDetailpage";
 import FacultyDashboard from "./pages/Facultydashboard";
 import DashboardPage from "./pages/DashboardPage";
+import FacultySupportPage from "./pages/FacultySupportPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleRedirect from "./components/RoleRedirect";
 
@@ -45,13 +46,21 @@ function App() {
           }
         />
         <Route
-  path="/faculty/student/:id"
-  element={
-    <ProtectedRoute allowedRoles={["faculty"]}>
-      <StudentDetailPage />
-    </ProtectedRoute>
-  }
-/>
+          path="/faculty/student/:id"
+          element={
+            <ProtectedRoute allowedRoles={["faculty"]}>
+              <StudentDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/faculty/special-support"
+          element={
+            <ProtectedRoute allowedRoles={["faculty"]}>
+              <FacultySupportPage />
+            </ProtectedRoute>
+          }
+        />
 
       </Routes>
     </BrowserRouter>

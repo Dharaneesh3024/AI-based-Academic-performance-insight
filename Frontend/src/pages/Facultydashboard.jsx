@@ -35,6 +35,12 @@ const FacultyDashboard = () => {
         <header className="dashboard-header">
           <h2>Faculty Dashboard</h2>
           <p>Monitor and analyze academic performance across your students.</p>
+          <button
+            className="manage-support-btn"
+            onClick={() => navigate("/faculty/special-support")}
+          >
+            Manage Special Support
+          </button>
         </header>
 
         {/* Statistics Section */}

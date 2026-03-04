@@ -26,6 +26,7 @@ const studentSchema = new mongoose.Schema({
         subject: String,
         dateTime: Date,
         topic: String,
+        attendance: { type: String, enum: ["present", "absent", "pending"], default: "pending" }
       }
     ],
     assessments: [

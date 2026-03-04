@@ -315,8 +315,13 @@ const DashboardPage = () => {
                       <h4>{cls.subject}</h4>
                       <p className="topic">{cls.topic}</p>
                     </div>
-                    <div className="item-time">
-                      <span>{new Date(cls.dateTime).toLocaleString()}</span>
+                    <div className="item-meta">
+                      <span className={`status-pill ${cls.attendance || "pending"}`}>
+                        {(cls.attendance || "pending").toUpperCase()}
+                      </span>
+                      <div className="item-time">
+                        <span>{new Date(cls.dateTime).toLocaleString()}</span>
+                      </div>
                     </div>
                   </motion.div>
                 ))}

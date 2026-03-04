@@ -108,35 +108,6 @@ const StudentDetailPage = () => {
     }
   }
 
-  const handleAssignClass = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`http://localhost:5000/api/students/${id}/assign-class`, {
-        subject: supportData.classSubject,
-        dateTime: supportData.classDate,
-        topic: supportData.classTopic
-      });
-      alert("Special class assigned!");
-      setSupportData({ ...supportData, classSubject: "", classDate: "", classTopic: "" });
-    } catch (err) {
-      alert("Failed to assign class");
-    }
-  };
-
-  const handleAssignAssessment = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`http://localhost:5000/api/students/${id}/assign-assessment`, {
-        subject: supportData.assessmentSubject,
-        deadline: supportData.assessmentDeadline
-      });
-      alert("Special assessment assigned!");
-      setSupportData({ ...supportData, assessmentSubject: "", assessmentDeadline: "" });
-    } catch (err) {
-      alert("Failed to assign assessment");
-    }
-  };
-
   // -------- AI RECOMMENDATION LOGIC --------
   const getRecommendation = () => {
     if (!student) return null;
@@ -453,74 +424,6 @@ const StudentDetailPage = () => {
             </table>
           </div>
         </motion.div>
-
-        {/* SPECIAL SUPPORT ASSIGNMENT (Only for Medium/High Risk) */}
-        {(riskLevel === "MEDIUM RISK" || riskLevel === "HIGH RISK") && (
-          <motion.section
-            className="special-support-section"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="section-header">
-              <h2>Assign Special Support</h2>
-              <p>Targeted interventions for students requiring extra attention.</p>
-            </div>
-
-            <div className="support-grid">
-              {/* Special Class Form */}
-              <div className="support-card-form">
-                <h3>Assign Special Class</h3>
-                <form onSubmit={handleAssignClass}>
-                  <select
-                    value={supportData.classSubject}
-                    onChange={e => setSupportData({ ...supportData, classSubject: e.target.value })}
-                    required
-                  >
-                    <option value="">Select Subject</option>
-                    {student.subjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-                  </select>
-                  <input
-                    type="datetime-local"
-                    value={supportData.classDate}
-                    onChange={e => setSupportData({ ...supportData, classDate: e.target.value })}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Topic (e.g., Advanced Calculus)"
-                    value={supportData.classTopic}
-                    onChange={e => setSupportData({ ...supportData, classTopic: e.target.value })}
-                    required
-                  />
-                  <button type="submit" className="btn-support">Schedule Class</button>
-                </form>
-              </div>
-
-              {/* Special Assessment Form */}
-              <div className="support-card-form">
-                <h3>Assign Special Assessment</h3>
-                <form onSubmit={handleAssignAssessment}>
-                  <select
-                    value={supportData.assessmentSubject}
-                    onChange={e => setSupportData({ ...supportData, assessmentSubject: e.target.value })}
-                    required
-                  >
-                    <option value="">Select Subject</option>
-                    {student.subjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-                  </select>
-                  <input
-                    type="datetime-local"
-                    value={supportData.assessmentDeadline}
-                    onChange={e => setSupportData({ ...supportData, assessmentDeadline: e.target.value })}
-                    required
-                  />
-                  <button type="submit" className="btn-support btn-warning">Assign Test</button>
-                </form>
-              </div>
-            </div>
-          </motion.section>
-        )}
-
       </div>
     </>
   );

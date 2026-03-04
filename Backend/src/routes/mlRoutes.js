@@ -7,7 +7,7 @@ router.post("/recommendation", async (req, res) => {
     try {
         const { marks, attendance, skillLevel } = req.body;
 
-        const pythonScript = path.join(__dirname, "../../ML/predict.py");
+        const pythonScript = path.join(__dirname, "../../../ML/predict.py");
         const inputData = JSON.stringify({ marks, attendance, skill_level: skillLevel });
 
         const pyProcess = spawn("python", [pythonScript, inputData]);
