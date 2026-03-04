@@ -104,6 +104,7 @@ const StudentDetailPage = () => {
       riskLevel = "MEDIUM RISK";
       riskColor = "orange";
     } else {
+      riskLevel = "LOW RISK";
       riskColor = "green";
     }
   }

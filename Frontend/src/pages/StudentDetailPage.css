@@ -1,12 +1,12 @@
 /* Modern Design System Tokens */
 :root {
-  --page-bg: #0f172a;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --primary-accent: #6366f1;
-  --secondary-accent: #8b5cf6;
+  --page-bg-token: var(--bg-primary);
+  --card-bg-token: var(--bg-secondary);
+  --glass-border-token: var(--border-glass);
+  --text-primary-token: var(--text-primary);
+  --text-secondary-token: var(--text-secondary);
+  --primary-accent-token: var(--accent-primary);
+  --secondary-accent-token: var(--accent-secondary);
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
@@ -18,8 +18,8 @@
   max-width: 1200px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
-  background: var(--page-bg);
-  color: var(--text-primary);
+  background: var(--page-bg-token);
+  color: var(--text-primary-token);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
@@ -38,19 +38,19 @@
 .chart-card,
 .attendance-card,
 .skills-card-detail {
-  background: var(--card-bg);
+  background: var(--card-bg-token);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 30px;
   border-radius: 24px;
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border-token);
+  box-shadow: var(--card-shadow);
   height: 100%;
 }
 
 .skills-card-detail h3 {
   margin-bottom: 25px;
-  color: var(--text-primary);
+  color: var(--text-primary-token);
   font-weight: 700;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .skill-fill {
-  background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent)) !important;
+  background: linear-gradient(90deg, var(--primary-accent-token), var(--secondary-accent-token)) !important;
 }
 
 /* Profile Card - Full Width */
@@ -82,7 +82,7 @@
   font-size: 2.25rem;
   font-weight: 800;
   margin-bottom: 10px;
-  background: linear-gradient(to right, #fff, #94a3b8);
+  background: linear-gradient(to right, var(--text-primary-token), var(--text-secondary-token));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -100,7 +100,7 @@
 }
 
 .profile-info strong {
-  color: var(--text-secondary);
+  color: var(--text-secondary-token);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -117,7 +117,7 @@
 
 .risk-card h3 {
   margin-bottom: 25px;
-  color: var(--text-secondary);
+  color: var(--text-secondary-token);
   font-weight: 600;
 }
 
@@ -132,6 +132,7 @@
   font-size: 5rem;
   font-weight: 900;
   line-height: 1;
+  color: var(--text-primary-token);
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
@@ -201,7 +202,7 @@
 .progress-bar {
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-glass);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -260,10 +261,10 @@
 }
 
 .rec-item {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-glass);
   padding: 15px 20px;
   border-radius: 12px;
-  border-left: 3px solid var(--primary-accent);
+  border-left: 3px solid var(--primary-accent-token);
 }
 
 .rec-item p {
@@ -313,8 +314,8 @@ th {
 
 td {
   padding: 15px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text-primary);
+  background: var(--bg-glass);
+  color: var(--text-primary-token);
   font-size: 0.95rem;
 }
 
@@ -361,7 +362,7 @@ tr:hover td {
 .table-card h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary-token);
 }
 
 /* Responsive */
@@ -396,8 +397,9 @@ tr:hover td {
 
 .section-header h2 {
   font-size: 2rem;
-  background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+  background: linear-gradient(135deg, var(--text-primary-token) 0%, var(--text-secondary-token) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 10px;
 }
@@ -418,7 +420,7 @@ tr:hover td {
 
 .support-card-form h3 {
   margin-bottom: 20px;
-  color: #fff;
+  color: var(--text-primary-token);
 }
 
 .support-card-form form {
@@ -430,10 +432,10 @@ tr:hover td {
 .support-card-form select,
 .support-card-form input {
   padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
   border-radius: 12px;
-  color: #fff;
+  color: var(--text-primary-token);
   font-size: 1rem;
 }
 
@@ -526,6 +528,17 @@ tr:hover td {
   cursor: not-allowed;
 }
 
-.status-pill.present { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-.status-pill.absent { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-.status-pill.pending { background: rgba(255, 255, 255, 0.1); color: #aaa; }
+.status-pill.present {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.status-pill.absent {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.status-pill.pending {
+  background: rgba(255, 255, 255, 0.1);
+  color: #aaa;
+}

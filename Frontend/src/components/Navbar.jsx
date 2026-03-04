@@ -1,9 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 import "./Navbar.css";
-import { useLocation } from "react-router-dom";
+
 const Navbar = () => {
   const navigate = useNavigate();
-    const location = useLocation();
+  const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   const role = localStorage.getItem("role");
 
   const handleLogout = () => {
@@ -15,18 +17,21 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-  {showBackButton && (
-    <button
-      className="nav-back-btn"
-      onClick={() => navigate(-1)}
-    >
-      ← Back
-    </button>
-  )}
-  <h2>AI Academic Insights</h2>
-</div>
+        {showBackButton && (
+          <button
+            className="nav-back-btn"
+            onClick={() => navigate(-1)}
+          >
+            ← Back
+          </button>
+        )}
+        <h2>AI Academic Insights</h2>
+      </div>
 
       <div className="navbar-right">
+        <button className="theme-toggle-btn" onClick={toggleTheme} title="Toggle Theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <span className="role-badge">
           {role === "faculty" ? "Faculty" : "Student"}
         </span>

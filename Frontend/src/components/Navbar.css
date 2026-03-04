@@ -1,18 +1,18 @@
 /* Modern Design System Tokens for Navbar */
 :root {
-  --nav-bg: #111827;
-  --nav-accent: #3b82f6;
+  --nav-bg: var(--bg-secondary);
+  --nav-accent: var(--accent-primary);
   --nav-danger: #ef4444;
   --nav-danger-hover: #dc2626;
-  --glass-nav: rgba(17, 24, 39, 0.8);
+  --glass-nav: var(--bg-secondary);
 }
 
 .navbar {
   height: 80px;
-  background: var(--glass-nav);
+  background: var(--bg-secondary);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  color: white;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,8 +20,8 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-glass);
+  box-shadow: var(--card-shadow);
 }
 
 .navbar-left {
@@ -33,10 +33,29 @@
   margin: 0;
   font-size: 1.4rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-primary) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
+}
+
+.theme-toggle-btn {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--border-glass);
+  transform: scale(1.1);
 }
 
 .navbar-right {
@@ -46,13 +65,13 @@
 }
 
 .role-badge {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-primary);
   padding: 6px 16px;
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid var(--border-glass);
   text-transform: capitalize;
 }
 
@@ -75,9 +94,9 @@
 }
 
 .nav-back-btn {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass);
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass);
   padding: 8px 16px;
   border-radius: 8px;
   margin-right: 20px;
@@ -90,8 +109,7 @@
 }
 
 .nav-back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--border-glass);
   transform: translateX(-4px);
 }
 
@@ -103,5 +121,10 @@
 
   .navbar h2 {
     font-size: 1.1rem;
+  }
+
+  .theme-toggle-btn {
+    padding: 6px;
+    font-size: 1rem;
   }
 }
