@@ -37,6 +37,14 @@ const StudentDetailPage = () => {
   const { id } = useParams();
   const [student, setStudent] = useState(null);
   const [displayRisk, setDisplayRisk] = useState(0);
+  const [mlRecommendation, setMlRecommendation] = useState("");
+  const [supportData, setSupportData] = useState({
+    classSubject: "",
+    classDate: "",
+    classTopic: "",
+    assessmentSubject: "",
+    assessmentDeadline: ""
+  });
 
   // Scroll to top
   useEffect(() => {
@@ -50,6 +58,27 @@ const StudentDetailPage = () => {
       .then((res) => setStudent(res.data))
       .catch((err) => console.error(err));
   }, [id]);
+
+  useEffect(() => {
+    if (student) {
+      const avgMarks = student.subjects.reduce((acc, sub) => acc + sub.marks, 0) / student.subjects.length;
+      const avgAttendance = student.subjects.reduce((acc, sub) => acc + sub.attendance, 0) / student.subjects.length;
+      const avgSkills = student.skills?.length
+        ? student.skills.reduce((acc, s) => acc + s.level, 0) / student.skills.length
+        : 0;
+
+      axios
+        .post("http://localhost:5000/api/ml/recommendation", {
+          marks: avgMarks,
+          attendance: avgAttendance,
+          skillLevel: avgSkills,
+        })
+        .then((res) => {
+          setMlRecommendation(res.data.recommendation);
+        })
+        .catch((err) => console.error("ML Fetch Error:", err));
+    }
+  }, [student]);
 
   // -------- SAFE RISK CALCULATION --------
   let riskScore = 0;
@@ -75,10 +104,38 @@ const StudentDetailPage = () => {
       riskLevel = "MEDIUM RISK";
       riskColor = "orange";
     } else {
-      riskLevel = "LOW RISK";
       riskColor = "green";
     }
   }
+
+  const handleAssignClass = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`http://localhost:5000/api/students/${id}/assign-class`, {
+        subject: supportData.classSubject,
+        dateTime: supportData.classDate,
+        topic: supportData.classTopic
+      });
+      alert("Special class assigned!");
+      setSupportData({ ...supportData, classSubject: "", classDate: "", classTopic: "" });
+    } catch (err) {
+      alert("Failed to assign class");
+    }
+  };
+
+  const handleAssignAssessment = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`http://localhost:5000/api/students/${id}/assign-assessment`, {
+        subject: supportData.assessmentSubject,
+        deadline: supportData.assessmentDeadline
+      });
+      alert("Special assessment assigned!");
+      setSupportData({ ...supportData, assessmentSubject: "", assessmentDeadline: "" });
+    } catch (err) {
+      alert("Failed to assign assessment");
+    }
+  };
 
   // -------- AI RECOMMENDATION LOGIC --------
   const getRecommendation = () => {
@@ -272,11 +329,17 @@ const StudentDetailPage = () => {
             <h3>AI Recommendations</h3>
           </div>
           <div className="recommendation-list">
-            {recommendations.map((rec, idx) => (
-              <div key={idx} className="rec-item">
-                <p>{rec}</p>
+            {mlRecommendation ? (
+              <div className="rec-item ml-recommendation">
+                <p>{mlRecommendation}</p>
               </div>
-            ))}
+            ) : (
+              recommendations.map((rec, idx) => (
+                <div key={idx} className="rec-item">
+                  <p>{rec}</p>
+                </div>
+              ))
+            )}
           </div>
         </motion.div>
 
@@ -313,6 +376,32 @@ const StudentDetailPage = () => {
                     }`}
                   initial={{ width: 0 }}
                   animate={{ width: `${sub.attendance}%` }}
+                  transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
+                ></motion.div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* SKILLS SECTION */}
+        <motion.div
+          className="skills-card-detail"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+        >
+          <h3>Skill-wise Progress</h3>
+          {student.skills?.map((skill, index) => (
+            <div key={index} className="skill-item">
+              <div className="skill-label">
+                <span>{skill.name}</span>
+                <span>{skill.level}%</span>
+              </div>
+              <div className="progress-bar">
+                <motion.div
+                  className="progress-fill skill-fill"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${skill.level}%` }}
                   transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
                 ></motion.div>
               </div>
@@ -364,6 +453,73 @@ const StudentDetailPage = () => {
             </table>
           </div>
         </motion.div>
+
+        {/* SPECIAL SUPPORT ASSIGNMENT (Only for Medium/High Risk) */}
+        {(riskLevel === "MEDIUM RISK" || riskLevel === "HIGH RISK") && (
+          <motion.section
+            className="special-support-section"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="section-header">
+              <h2>Assign Special Support</h2>
+              <p>Targeted interventions for students requiring extra attention.</p>
+            </div>
+
+            <div className="support-grid">
+              {/* Special Class Form */}
+              <div className="support-card-form">
+                <h3>Assign Special Class</h3>
+                <form onSubmit={handleAssignClass}>
+                  <select
+                    value={supportData.classSubject}
+                    onChange={e => setSupportData({ ...supportData, classSubject: e.target.value })}
+                    required
+                  >
+                    <option value="">Select Subject</option>
+                    {student.subjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                  </select>
+                  <input
+                    type="datetime-local"
+                    value={supportData.classDate}
+                    onChange={e => setSupportData({ ...supportData, classDate: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Topic (e.g., Advanced Calculus)"
+                    value={supportData.classTopic}
+                    onChange={e => setSupportData({ ...supportData, classTopic: e.target.value })}
+                    required
+                  />
+                  <button type="submit" className="btn-support">Schedule Class</button>
+                </form>
+              </div>
+
+              {/* Special Assessment Form */}
+              <div className="support-card-form">
+                <h3>Assign Special Assessment</h3>
+                <form onSubmit={handleAssignAssessment}>
+                  <select
+                    value={supportData.assessmentSubject}
+                    onChange={e => setSupportData({ ...supportData, assessmentSubject: e.target.value })}
+                    required
+                  >
+                    <option value="">Select Subject</option>
+                    {student.subjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                  </select>
+                  <input
+                    type="datetime-local"
+                    value={supportData.assessmentDeadline}
+                    onChange={e => setSupportData({ ...supportData, assessmentDeadline: e.target.value })}
+                    required
+                  />
+                  <button type="submit" className="btn-support btn-warning">Assign Test</button>
+                </form>
+              </div>
+            </div>
+          </motion.section>
+        )}
 
       </div>
     </>

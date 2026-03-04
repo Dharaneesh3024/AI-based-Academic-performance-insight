@@ -19,6 +19,7 @@
 .dashboard-welcome .highlight {
   background: linear-gradient(135deg, #6366f1, #a855f7);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -169,6 +170,42 @@
   width: 100%;
 }
 
+.stat-pill.orange .stat-value {
+  color: #fb923c;
+}
+
+/* Skills Progress */
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.skill-row {
+  margin-bottom: 0.25rem;
+}
+
+.skill-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.skill-bar-bg {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+}
+
 @media (max-width: 768px) {
   .student-dashboard {
     padding: 1rem;
@@ -191,4 +228,169 @@
   height: 60vh;
   font-size: 1.2rem;
   color: #94a3b8;
+}
+
+/* DASHBOARD TABS */
+.welcome-tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.tab-switcher {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 5px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: #aaa;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.tab-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #f59e0b;
+}
+
+/* SPECIAL SUPPORT TAB CONTENT */
+.special-support-tab {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  padding-top: 20px;
+}
+
+.support-section h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #fff;
+  opacity: 0.9;
+}
+
+.support-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.support-item-card {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.support-item-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.item-info h4 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.item-info .topic,
+.item-info .deadline,
+.item-info .score {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.item-time span {
+  font-size: 0.85rem;
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.test-card {
+  border-left: 4px solid #f59e0b !important;
+}
+
+.test-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.test-actions button,
+.start-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.start-btn {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.pass-btn {
+  background: #10b981;
+  color: #fff;
+}
+
+.fail-btn {
+  background: #ef4444;
+  color: #fff;
+}
+
+.completed {
+  opacity: 0.8;
+  border-left: 4px solid #4ade80 !important;
+}
+
+.status-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.status-pill.passed {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.status-pill.failed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.empty-msg {
+  color: #666;
+  font-style: italic;
 }
