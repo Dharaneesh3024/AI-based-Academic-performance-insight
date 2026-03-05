@@ -40,7 +40,8 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ message: "Signup successful" });
   } catch (err) {
-    res.status(500).json({ message: "Signup failed" });
+    console.error("Signup Error:", err);
+    res.status(500).json({ message: "Signup failed", error: err.message });
   }
 };
 
@@ -50,17 +51,26 @@ exports.login = async (req, res) => {
 
     // Support both email and rollNo identifier
     const identifier = email || rollNo;
+    console.log("Login attempt for:", identifier);
+
     const user = await User.findOne({
       $or: [{ email: identifier }, { rollNo: identifier }]
     });
 
     if (!user) {
+      console.log("User not found:", identifier);
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("Password mismatch for:", identifier);
       return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not defined in environment variables");
+      throw new Error("Internal server configuration error");
     }
 
     const token = jwt.sign(
@@ -75,6 +85,7 @@ exports.login = async (req, res) => {
       rollNo: user.rollNo
     });
   } catch (err) {
-    res.status(500).json({ message: "Login failed" });
+    console.error("Login Error:", err);
+    res.status(500).json({ message: "Login failed", error: err.message });
   }
 };
