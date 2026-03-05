@@ -13,6 +13,7 @@ const FacultySupportPage = () => {
         classDate: "",
         classTopic: "",
         assessmentSubject: "",
+        assessmentTopic: "",
         assessmentDeadline: ""
     });
 
@@ -52,13 +53,35 @@ const FacultySupportPage = () => {
 
     const handleAssignAssessment = async (e) => {
         e.preventDefault();
+
+        const topic = supportData.assessmentTopic;
+        const subject = supportData.assessmentSubject;
+
+        // AI Validation
+        try {
+            const token = localStorage.getItem("token");
+            const validationRes = await axios.post("http://localhost:5000/api/ai/validate-topic",
+                { subject, topic },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (!validationRes.data.valid) {
+                alert(`The topic "${topic}" does not closely match the subject "${subject}". Please enter a valid academic topic.`);
+                return;
+            }
+        } catch (err) {
+            console.error("Validation error:", err);
+            // If AI validation fails for technical reasons, we'll allow but log
+        }
+
         try {
             await axios.post(`http://localhost:5000/api/students/${selectedStudent._id}/assign-assessment`, {
-                subject: supportData.assessmentSubject,
+                subject,
+                topic,
                 deadline: supportData.assessmentDeadline
             });
             alert("Special assessment assigned!");
-            setSupportData({ ...supportData, assessmentSubject: "", assessmentDeadline: "" });
+            setSupportData({ ...supportData, assessmentSubject: "", assessmentTopic: "", assessmentDeadline: "" });
             refreshSelectedStudent();
         } catch (err) {
             alert("Failed to assign assessment");
@@ -172,6 +195,13 @@ const FacultySupportPage = () => {
                                                 <option value="">Select Subject</option>
                                                 {selectedStudent.subjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
                                             </select>
+                                            <input
+                                                type="text"
+                                                placeholder="Assessment Topic"
+                                                value={supportData.assessmentTopic}
+                                                onChange={e => setSupportData({ ...supportData, assessmentTopic: e.target.value })}
+                                                required
+                                            />
                                             <input
                                                 type="datetime-local"
                                                 value={supportData.assessmentDeadline}

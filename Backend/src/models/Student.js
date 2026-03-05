@@ -32,6 +32,7 @@ const studentSchema = new mongoose.Schema({
     assessments: [
       {
         subject: String,
+        topic: String,
         deadline: Date,
         status: { type: String, enum: ["pending", "passed", "failed"], default: "pending" },
         score: Number,

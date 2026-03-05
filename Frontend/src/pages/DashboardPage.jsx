@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -38,8 +38,14 @@ const DashboardPage = () => {
   const [mlInsights, setMlInsights] = useState([]);
   const [riskData, setRiskData] = useState({ score: 0, level: "Loading..." });
   const [classStats, setClassStats] = useState(null);
-  const [activeTab, setActiveTab] = useState("academic"); // academic or support
-  const [submittingTest, setSubmittingTest] = useState(null); // ID of assessment being taken
+  const [submittingTest, setSubmittingTest] = useState(null); // ID of assessment object being taken
+  const [quizQuestions, setQuizQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [quizScore, setQuizScore] = useState(0);
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false);
+  const [activeTab, setActiveTab] = useState("academic");
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -123,6 +129,50 @@ const DashboardPage = () => {
     { label: "Skill average", value: `${avgSkills}%`, color: "orange" },
     { label: "AI Risk Level", value: riskData.level, color: riskData.level === "Stable" ? "green" : riskData.level === "Caution" ? "orange" : "red" }
   ];
+
+  const fetchQuiz = async (test) => {
+    setIsGeneratingQuiz(true);
+    setShowQuizModal(true);
+    setSubmittingTest(test); // Store full test object
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post("http://localhost:5000/api/ai/generate-quiz",
+        { topic: test.topic },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setQuizQuestions(res.data.quiz);
+      setCurrentQuestionIndex(0);
+      setQuizScore(0);
+      setSelectedAnswer(null);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to generate quiz. Please try again.");
+      setShowQuizModal(false);
+    } finally {
+      setIsGeneratingQuiz(false);
+    }
+  };
+
+  const handleAnswerSelect = (option) => {
+    setSelectedAnswer(option);
+  };
+
+  const handleQuizNext = () => {
+    // Check if correct
+    if (selectedAnswer === quizQuestions[currentQuestionIndex].correctAnswer) {
+      setQuizScore(prev => prev + 1);
+    }
+
+    if (currentQuestionIndex < quizQuestions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+    } else {
+      // Quiz Finished
+      const finalScore = ((quizScore + (selectedAnswer === quizQuestions[currentQuestionIndex].correctAnswer ? 1 : 0)) / quizQuestions.length) * 100;
+      handleCompleteAssessment(submittingTest._id, finalScore);
+      setShowQuizModal(false);
+    }
+  };
 
   const handleCompleteAssessment = async (assessmentId, score) => {
     try {
@@ -371,13 +421,13 @@ const DashboardPage = () => {
                       <h4>{test.subject} Assessment</h4>
                       <p className="deadline">Deadline: {new Date(test.deadline).toLocaleString()}</p>
                     </div>
-                    {submittingTest === test._id ? (
+                    {false ? (
                       <div className="test-actions">
                         <button onClick={() => handleCompleteAssessment(test._id, 80)} className="pass-btn">Submit (Simulate Pass)</button>
                         <button onClick={() => handleCompleteAssessment(test._id, 30)} className="fail-btn">Submit (Simulate Fail)</button>
                       </div>
                     ) : (
-                      <button onClick={() => setSubmittingTest(test._id)} className="start-btn">Take Test</button>
+                      <button onClick={() => fetchQuiz(test)} className="start-btn">Take AI Quiz</button>
                     )}
                   </motion.div>
                 ))}
@@ -402,6 +452,65 @@ const DashboardPage = () => {
           </div>
         )}
       </div>
+      {/* QUIZ MODAL */}
+      <AnimatePresence>
+        {showQuizModal && (
+          <motion.div
+            className="quiz-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="quiz-modal-content"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+            >
+              {isGeneratingQuiz ? (
+                <div className="quiz-loading">
+                  <div className="loader"></div>
+                  <p>AI is generating your custom quiz for <strong>{submittingTest?.topic}</strong>...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="quiz-header">
+                    <h3>{submittingTest?.subject}: {submittingTest?.topic}</h3>
+                    <div className="quiz-progress">
+                      Question {currentQuestionIndex + 1} of {quizQuestions.length}
+                    </div>
+                  </div>
+
+                  <div className="quiz-body">
+                    <p className="question-text">{quizQuestions[currentQuestionIndex]?.question}</p>
+                    <div className="options-grid">
+                      {quizQuestions[currentQuestionIndex]?.options.map((opt, i) => (
+                        <button
+                          key={i}
+                          className={`option-btn ${selectedAnswer === opt ? "selected" : ""}`}
+                          onClick={() => handleAnswerSelect(opt)}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="quiz-footer">
+                    <button
+                      className="next-btn"
+                      disabled={!selectedAnswer}
+                      onClick={handleQuizNext}
+                    >
+                      {currentQuestionIndex === quizQuestions.length - 1 ? "Finish Quiz" : "Next Question"}
+                    </button>
+                    <button className="cancel-btn" onClick={() => setShowQuizModal(false)}>Cancel</button>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

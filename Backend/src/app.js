@@ -5,6 +5,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const mlRoutes = require("./routes/mlRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/ml", mlRoutes);
+app.use("/api/ai", aiRoutes);
 
 // MongoDB connection
 mongoose
