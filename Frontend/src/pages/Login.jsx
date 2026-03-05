@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { login } from "../services/auth";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./Login.css"
+
 const Login = () => {
   const [formData, setFormData] = useState({
     identifier: "",
