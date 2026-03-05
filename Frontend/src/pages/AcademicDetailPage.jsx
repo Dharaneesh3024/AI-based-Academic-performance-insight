@@ -18,7 +18,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar, Radar } from "react-chartjs-2";
-import "./StudentDetailPage.css";
+import "./AcademicDetailPage.css";
 
 ChartJS.register(
   CategoryScale,
@@ -33,7 +33,7 @@ ChartJS.register(
   Legend
 );
 
-const StudentDetailPage = () => {
+const AcademicDetailPage = () => {
   const { id } = useParams();
   const [student, setStudent] = useState(null);
   const [displayRisk, setDisplayRisk] = useState(0);
@@ -438,4 +438,4 @@ const StudentDetailPage = () => {
   );
 };
 
-export default StudentDetailPage;
+export default AcademicDetailPage;

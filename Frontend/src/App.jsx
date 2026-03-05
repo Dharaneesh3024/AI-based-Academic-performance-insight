@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import StudentDetailPage from "./pages/StudentDetailPage";
+import AcademicDetailPage from "./pages/AcademicDetailPage";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import DashboardPage from "./pages/DashboardPage";
 import FacultySupportPage from "./pages/FacultySupportPage";
@@ -49,7 +49,7 @@ function App() {
           path="/faculty/student/:id"
           element={
             <ProtectedRoute allowedRoles={["faculty"]}>
-              <StudentDetailPage />
+              <AcademicDetailPage />
             </ProtectedRoute>
           }
         />
