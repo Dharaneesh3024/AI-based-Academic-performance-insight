@@ -100,7 +100,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 /* AI Insights specific */
@@ -242,10 +242,10 @@
 
 .tab-switcher {
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-glass);
   padding: 5px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-glass);
 }
 
 .tab-btn {
@@ -261,8 +261,8 @@
 }
 
 .tab-btn.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--border-glass);
+  color: var(--text-primary);
 }
 
 .tab-dot {
@@ -287,7 +287,7 @@
 .support-section h2 {
   margin-bottom: 20px;
   font-size: 1.5rem;
-  color: #fff;
+  color: var(--text-primary);
   opacity: 0.9;
 }
 
@@ -299,8 +299,8 @@
 
 .support-item-card {
   padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
   border-radius: 18px;
   display: flex;
   justify-content: space-between;
@@ -310,7 +310,7 @@
 
 .support-item-card:hover {
   transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--border-glass);
 }
 
 .item-info h4 {
@@ -356,17 +356,17 @@
 
 .start-btn {
   background: #f59e0b;
-  color: #fff;
+  color: var(--text-accent);
 }
 
 .pass-btn {
   background: #10b981;
-  color: #fff;
+  color: var(--text-accent);
 }
 
 .fail-btn {
   background: #ef4444;
-  color: #fff;
+  color: var(--text-accent);
 }
 
 .completed {
@@ -406,16 +406,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--border-glass);
   border-radius: 10px;
   transition: background 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--text-secondary);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.05) transparent;
+  scrollbar-color: var(--border-glass) transparent;
 }

@@ -69,6 +69,8 @@ const DashboardPage = () => {
 
       axios
         .post("http://localhost:5000/api/ml/recommendation", {
+          name: student.name,
+          subjects: student.subjects,
           marks: avgMarks,
           attendance: avgAttendance,
           skillLevel: avgSkills,
@@ -214,7 +216,11 @@ const DashboardPage = () => {
               >
                 <h3><span className="sparkle">✨</span> AI Personalized Insights</h3>
                 <ul>
-                  {mlRecommendation ? (
+                  {mlRecommendation && Array.isArray(mlRecommendation) ? (
+                    mlRecommendation.map((rec, i) => (
+                      <li key={i} className="ml-item">{rec}</li>
+                    ))
+                  ) : mlRecommendation ? (
                     <li className="ml-item">{mlRecommendation}</li>
                   ) : (
                     getAIRecommendation().map((rec, i) => (

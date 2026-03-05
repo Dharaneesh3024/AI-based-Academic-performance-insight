@@ -129,7 +129,7 @@
 }
 
 .auth-container input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-placeholder);
 }
 
 .auth-container input:focus,
@@ -189,8 +189,8 @@
 }
 
 .auth-container a:hover {
-  color: #fff;
-  text-decoration: underline;
+  color: slateblue;
+  text-decoration: none;
 }
 
 /* Responsive adjustments */

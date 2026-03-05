@@ -13,7 +13,8 @@ const Navbar = () => {
     localStorage.removeItem("role");
     navigate("/login");
   };
-  const showBackButton = location.pathname.includes("/student/");
+  const rootPaths = ["/student/dashboard", "/faculty/dashboard", "/dashboard", "/login", "/signup", "/"];
+  const showBackButton = !rootPaths.includes(location.pathname);
   return (
     <nav className="navbar">
       <div className="navbar-left">

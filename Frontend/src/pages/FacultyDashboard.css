@@ -44,7 +44,7 @@
   background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: var(--text-accent);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
