@@ -56,7 +56,7 @@ const DashboardPage = () => {
 
     // Fetch Profile
     axios
-      .get("http://localhost:5000/api/students/profile", {
+      .get("/api/students/profile", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((res) => {
@@ -69,7 +69,7 @@ const DashboardPage = () => {
 
     // Fetch Class Analytics
     axios
-      .get("http://localhost:5000/api/students/analytics/class-stats", {
+      .get("/api/students/analytics/class-stats", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((res) => {
@@ -87,7 +87,7 @@ const DashboardPage = () => {
         : 0;
 
       axios
-        .post("http://localhost:5000/api/ml/recommendation", {
+        .post("/api/ml/recommendation", {
           name: student.name,
           subjects: student.subjects,
           marks: avgMarks,
@@ -136,7 +136,7 @@ const DashboardPage = () => {
     setSubmittingTest(test); // Store full test object
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("http://localhost:5000/api/ai/generate-quiz",
+      const res = await axios.post("/api/ai/generate-quiz",
         { topic: test.topic },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -177,13 +177,13 @@ const DashboardPage = () => {
   const handleCompleteAssessment = async (assessmentId, score) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/students/profile/complete-assessment",
+      await axios.post("/api/students/profile/complete-assessment",
         { assessmentId, score },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Refresh student data
-      const res = await axios.get("http://localhost:5000/api/students/profile", {
+      const res = await axios.get("/api/students/profile", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setStudent(res.data);

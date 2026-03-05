@@ -54,7 +54,7 @@ const StudentDetailPage = () => {
   // Fetch student data
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/students/${id}`)
+      .get(`/api/students/${id}`)
       .then((res) => setStudent(res.data))
       .catch((err) => console.error(err));
   }, [id]);
@@ -68,7 +68,7 @@ const StudentDetailPage = () => {
         : 0;
 
       axios
-        .post("http://localhost:5000/api/ml/recommendation", {
+        .post("/api/ml/recommendation", {
           name: student.name,
           subjects: student.subjects,
           marks: avgMarks,

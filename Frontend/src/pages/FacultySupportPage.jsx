@@ -23,7 +23,7 @@ const FacultySupportPage = () => {
 
     const fetchStudents = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/students");
+            const res = await axios.get("/api/students");
             setStudents(res.data);
         } catch (err) {
             console.error("Error fetching students:", err);
@@ -38,7 +38,7 @@ const FacultySupportPage = () => {
     const handleAssignClass = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://localhost:5000/api/students/${selectedStudent._id}/assign-class`, {
+            await axios.post(`/api/students/${selectedStudent._id}/assign-class`, {
                 subject: supportData.classSubject,
                 dateTime: supportData.classDate,
                 topic: supportData.classTopic
@@ -60,7 +60,7 @@ const FacultySupportPage = () => {
         // AI Validation
         try {
             const token = localStorage.getItem("token");
-            const validationRes = await axios.post("http://localhost:5000/api/ai/validate-topic",
+            const validationRes = await axios.post("/api/ai/validate-topic",
                 { subject, topic },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -75,7 +75,7 @@ const FacultySupportPage = () => {
         }
 
         try {
-            await axios.post(`http://localhost:5000/api/students/${selectedStudent._id}/assign-assessment`, {
+            await axios.post(`/api/students/${selectedStudent._id}/assign-assessment`, {
                 subject,
                 topic,
                 deadline: supportData.assessmentDeadline
@@ -90,7 +90,7 @@ const FacultySupportPage = () => {
 
     const handleMarkAttendance = async (classId, attendance) => {
         try {
-            await axios.patch(`http://localhost:5000/api/students/${selectedStudent._id}/special-class/${classId}`, { attendance });
+            await axios.patch(`/api/students/${selectedStudent._id}/special-class/${classId}`, { attendance });
             refreshSelectedStudent();
         } catch (err) {
             alert("Failed to mark attendance");
@@ -99,7 +99,7 @@ const FacultySupportPage = () => {
 
     const refreshSelectedStudent = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/students/${selectedStudent._id}`);
+            const res = await axios.get(`/api/students/${selectedStudent._id}`);
             setSelectedStudent(res.data);
             // Also update in main list
             setStudents(prev => prev.map(s => s._id === res.data._id ? res.data : s));

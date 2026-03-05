@@ -11,7 +11,7 @@ const FacultyDashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/students")
+      .get("/api/students")
       .then((res) => setStudents(res.data))
       .catch((err) => console.error(err));
   }, []);
