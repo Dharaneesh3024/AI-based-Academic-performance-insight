@@ -9,6 +9,17 @@ def get_recommendations(name, subjects, marks, attendance, skill_level):
     action_insights = []
     other_insights = []
     
+    # Calculate Risk Score (0-100, where 100 is stable and 0 is high risk)
+    # Weights: Marks (50%), Attendance (30%), Skills (20%)
+    risk_score = (marks * 0.5) + (attendance * 0.3) + (skill_level * 0.2)
+    risk_score = round(max(0, min(100, risk_score)), 2)
+    
+    risk_level = "Stable"
+    if risk_score < 40:
+        risk_level = "High Risk"
+    elif risk_score < 70:
+        risk_level = "Caution"
+
     # 1. Subject-wise Analysis
     for sub in subjects:
         sub_name = sub.get('name', 'Subject')
@@ -38,7 +49,11 @@ def get_recommendations(name, subjects, marks, attendance, skill_level):
     if not insights:
         insights.append(f"Keep it up, {name}! Your current trajectory is excellent. Focus on maintaining consistency.")
 
-    return insights
+    return {
+        "insights": insights,
+        "risk_score": risk_score,
+        "risk_level": risk_level
+    }
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -51,7 +66,7 @@ if __name__ == "__main__":
             skill_level = input_data.get('skill_level', 0)
 
             results = get_recommendations(name, subjects, marks, attendance, skill_level)
-            print(json.dumps({"recommendation": results}))
+            print(json.dumps(results))
         except Exception as e:
             print(json.dumps({"error": str(e)}))
     else:

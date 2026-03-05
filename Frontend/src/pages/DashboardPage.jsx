@@ -34,7 +34,10 @@ ChartJS.register(
 const DashboardPage = () => {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [mlRecommendation, setMlRecommendation] = useState("");
+  const [mlRecommendation, setMlRecommendation] = useState([]);
+  const [mlInsights, setMlInsights] = useState([]);
+  const [riskData, setRiskData] = useState({ score: 0, level: "Loading..." });
+  const [classStats, setClassStats] = useState(null);
   const [activeTab, setActiveTab] = useState("academic"); // academic or support
   const [submittingTest, setSubmittingTest] = useState(null); // ID of assessment being taken
 
@@ -45,18 +48,28 @@ const DashboardPage = () => {
       return;
     }
 
+    // Fetch Profile
     axios
       .get("http://localhost:5000/api/students/profile", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((res) => {
         setStudent(res.data);
-        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
         setLoading(false);
       });
+
+    // Fetch Class Analytics
+    axios
+      .get("http://localhost:5000/api/students/analytics/class-stats", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then((res) => {
+        setClassStats(res.data);
+      })
+      .catch((err) => console.error("Class Stats Error:", err));
   }, []);
 
   useEffect(() => {
@@ -76,9 +89,14 @@ const DashboardPage = () => {
           skillLevel: avgSkills,
         })
         .then((res) => {
-          setMlRecommendation(res.data.recommendation);
+          setMlInsights(res.data.insights || []);
+          setRiskData({ score: res.data.risk_score, level: res.data.risk_level });
+          setLoading(false);
         })
-        .catch((err) => console.error("ML Fetch Error:", err));
+        .catch((err) => {
+          console.error("ML Fetch Error:", err);
+          setLoading(false);
+        });
     }
   }, [student]);
 
@@ -103,7 +121,7 @@ const DashboardPage = () => {
     { label: "Academic Average", value: `${avgMarks}%`, color: "blue" },
     { label: "Overall Attendance", value: `${avgAttendance}%`, color: "green" },
     { label: "Skill average", value: `${avgSkills}%`, color: "orange" },
-    { label: "AI Performance Status", value: avgMarks > 75 ? "Excellent" : "Needs Review", color: "purple" }
+    { label: "AI Risk Level", value: riskData.level, color: riskData.level === "Stable" ? "green" : riskData.level === "Caution" ? "orange" : "red" }
   ];
 
   const handleCompleteAssessment = async (assessmentId, score) => {
@@ -129,7 +147,7 @@ const DashboardPage = () => {
   const barData = {
     labels: student.subjects.map((s) => s.name),
     datasets: [{
-      label: "Marks",
+      label: "Your Marks",
       data: student.subjects.map((s) => s.marks),
       backgroundColor: "rgba(99, 102, 241, 0.6)",
       borderColor: "#6366f1",
@@ -142,18 +160,22 @@ const DashboardPage = () => {
     labels: student.subjects.map((s) => s.name),
     datasets: [
       {
-        label: "Marks",
+        label: "Your Marks",
         data: student.subjects.map((s) => s.marks),
         backgroundColor: "rgba(99, 102, 241, 0.2)",
         borderColor: "#6366f1",
         borderWidth: 2,
       },
       {
-        label: "Attendance",
-        data: student.subjects.map((s) => s.attendance),
-        backgroundColor: "rgba(16, 185, 129, 0.2)",
-        borderColor: "#10b981",
+        label: "Class Average",
+        data: student.subjects.map((s) => {
+          const stats = classStats?.averages.find(a => a.name === s.name);
+          return stats ? stats.avgMarks : 0;
+        }),
+        backgroundColor: "rgba(239, 68, 68, 0.1)",
+        borderColor: "#ef4444",
         borderWidth: 2,
+        borderDash: [5, 5],
       }
     ]
   };
@@ -214,14 +236,19 @@ const DashboardPage = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
-                <h3><span className="sparkle">✨</span> AI Personalized Insights</h3>
-                <ul>
-                  {mlRecommendation && Array.isArray(mlRecommendation) ? (
-                    mlRecommendation.map((rec, i) => (
+                <h3><span className="sparkle">✨</span> AI Performance Analysis</h3>
+                <div className="risk-indicator">
+                  <div className={`risk-score-circle ${riskData.level.toLowerCase().replace(" ", "-")}`}>
+                    <span className="score-val">{riskData.score}%</span>
+                    <span className="score-label">Risk Score</span>
+                  </div>
+                  <p className="risk-statement">Status: <strong>{riskData.level}</strong></p>
+                </div>
+                <ul className="insight-list">
+                  {mlInsights.length > 0 ? (
+                    mlInsights.map((rec, i) => (
                       <li key={i} className="ml-item">{rec}</li>
                     ))
-                  ) : mlRecommendation ? (
-                    <li className="ml-item">{mlRecommendation}</li>
                   ) : (
                     getAIRecommendation().map((rec, i) => (
                       <li key={i}>{rec}</li>

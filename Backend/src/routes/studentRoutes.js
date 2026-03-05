@@ -1,6 +1,57 @@
 const express = require("express");
 const Student = require("../models/Student");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
+
+// Get class analytics for comparison (department & semester)
+router.get("/analytics/class-stats", authMiddleware, async (req, res) => {
+  try {
+    const { rollNo } = req.user;
+    const currentStudent = await Student.findOne({ rollNo });
+
+    if (!currentStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const { department, semester } = currentStudent;
+
+    // Find all students in the same department and semester
+    const peers = await Student.find({ department, semester });
+
+    if (peers.length === 0) {
+      return res.json({ averages: [] });
+    }
+
+    // Calculate subject-wise averages
+    const subjectStats = {};
+
+    peers.forEach(p => {
+      p.subjects.forEach(s => {
+        if (!subjectStats[s.name]) {
+          subjectStats[s.name] = { totalMarks: 0, totalAttendance: 0, count: 0 };
+        }
+        subjectStats[s.name].totalMarks += s.marks;
+        subjectStats[s.name].totalAttendance += s.attendance;
+        subjectStats[s.name].count += 1;
+      });
+    });
+
+    const averages = Object.keys(subjectStats).map(name => ({
+      name,
+      avgMarks: parseFloat((subjectStats[name].totalMarks / subjectStats[name].count).toFixed(2)),
+      avgAttendance: parseFloat((subjectStats[name].totalAttendance / subjectStats[name].count).toFixed(2))
+    }));
+
+    res.json({
+      department,
+      semester,
+      peerCount: peers.length,
+      averages
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 router.get("/", async (req, res) => {
   try {
@@ -10,8 +61,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
-const authMiddleware = require("../middleware/authMiddleware");
-
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
     // req.user is set by authMiddleware
