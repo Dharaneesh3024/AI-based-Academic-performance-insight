@@ -53,6 +53,55 @@ router.get("/analytics/class-stats", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/analytics/peer-comparison", authMiddleware, async (req, res) => {
+  try {
+    const { rollNo } = req.user;
+    const currentStudent = await Student.findOne({ rollNo });
+
+    if (!currentStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const { department, semester } = currentStudent;
+    const peers = await Student.find({ department, semester });
+
+    const comparisonItems = currentStudent.subjects.map(subject => {
+      // Extract all marks for this subject from peers
+      const peerMarks = peers.map(p => {
+        const s = p.subjects.find(sub => sub.name === subject.name);
+        return s ? s.marks : 0;
+      }).sort((a, b) => b - a); // descending
+
+      const totalPeers = peerMarks.length;
+      if (totalPeers === 0) return { subject: subject.name, percentile: 100, rank: 1 };
+
+      // Find rank (1-indexed)
+      const rank = peerMarks.indexOf(subject.marks) + 1;
+
+      // Calculate "Top X%"
+      // If student is rank 1 out of 10, they are in top 10%
+      const topPercentage = Math.ceil((rank / totalPeers) * 100);
+
+      let motivationalText = `You're in the top ${topPercentage}% in ${subject.name}`;
+      if (topPercentage <= 10) motivationalText = `Exceptional! You're in the elite top 10% in ${subject.name}`;
+      else if (topPercentage <= 25) motivationalText = `Outstanding! You're in the top 25% in ${subject.name}`;
+
+      return {
+        subject: subject.name,
+        percentile: 100 - ((rank - 1) / totalPeers) * 100, // standard percentile
+        topPercentage,
+        rank,
+        totalPeers,
+        text: motivationalText
+      };
+    });
+
+    res.json(comparisonItems);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const students = await Student.find();

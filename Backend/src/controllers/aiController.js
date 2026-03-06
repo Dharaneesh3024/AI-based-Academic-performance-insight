@@ -82,7 +82,60 @@ const validateTopic = async (req, res) => {
     }
 };
 
+const generateStudyRoadmap = async (req, res) => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+        return res.status(500).json({ message: "Groq API Key is missing in Backend .env" });
+    }
+
+    try {
+        const { rollNo } = req.user;
+        const Student = require("../models/Student");
+        const student = await Student.findOne({ rollNo });
+
+        if (!student) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        const weakSubjects = student.subjects.filter(s => s.marks < 60);
+        const subjectContext = student.subjects.map(s => `${s.name} (Marks: ${s.marks}%, Attendance: ${s.attendance}%)`).join(", ");
+
+        const prompt = `Act as an expert academic counselor. Create a personalized, highly specific 4-week study roadmap for a student named ${student.name}.
+        The student's current status: ${subjectContext}.
+        
+        Focus heavily on improving subjects where marks are below 60%: ${weakSubjects.map(s => s.name).join(", ")}.
+        Keep the tone encouraging yet disciplined.
+        
+        Return ONLY a JSON object with this structure:
+        {
+          "roadmap": [
+            {
+              "week": 1,
+              "focus": "Topic/Subject Name",
+              "goals": ["Goal 1", "Goal 2", "Goal 3"],
+              "tips": ["Tip 1", "Tip 2"]
+            },
+            ...
+          ]
+        }
+        Generate exactly 4 weeks. Do not include any other text.`;
+
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [{ role: "user", content: prompt }],
+            model: "llama-3.3-70b-versatile",
+            response_format: { type: "json_object" }
+        });
+
+        const roadmapData = JSON.parse(chatCompletion.choices[0].message.content);
+        res.json(roadmapData);
+    } catch (error) {
+        console.error("Roadmap Generation Error:", error);
+        res.status(500).json({ message: "Failed to generate roadmap", error: error.message });
+    }
+};
+
 module.exports = {
     generateQuiz,
-    validateTopic
+    validateTopic,
+    generateStudyRoadmap
 };

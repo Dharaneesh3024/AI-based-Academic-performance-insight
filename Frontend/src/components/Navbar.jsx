@@ -8,6 +8,8 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const role = localStorage.getItem("role");
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -23,13 +25,20 @@ const Navbar = () => {
             className="nav-back-btn"
             onClick={() => navigate(-1)}
           >
-            ← Back
+            ←
           </button>
         )}
-        <h2>AI Academic Insights</h2>
+        <h2>AI Insights</h2>
       </div>
 
-      <div className="navbar-right">
+      <button
+        className="mobile-menu-toggle"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        {isMobileMenuOpen ? "✕" : "☰"}
+      </button>
+
+      <div className={`navbar-right ${isMobileMenuOpen ? "active" : ""}`}>
         <button className="theme-toggle-btn" onClick={toggleTheme} title="Toggle Theme">
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>

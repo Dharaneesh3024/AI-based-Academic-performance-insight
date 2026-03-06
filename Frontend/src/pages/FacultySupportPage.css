@@ -167,6 +167,57 @@
     gap: 40px;
 }
 
+@media (max-width: 900px) {
+    .support-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
+
+    .student-sidebar {
+        height: 300px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-glass);
+    }
+
+    .support-main {
+        padding: 20px;
+        height: auto;
+        overflow: visible;
+    }
+
+    .support-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .assignment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .support-tracking-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .support-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .tracking-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .attendance-btns {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
 .tracking-column h4 {
     margin-bottom: 20px;
     color: #94a3b8;

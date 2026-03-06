@@ -3,6 +3,7 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import "./FacultyDashboard.css";
 import { useNavigate } from "react-router-dom";
+import { generateStudentReport } from "../services/reportService";
 
 const FacultyDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -103,6 +104,16 @@ const FacultyDashboard = () => {
                 </div>
                 <div className="card-footer">
                   <span className="badge">View Insights →</span>
+                  <button
+                    className="pdf-download-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      generateStudentReport(student);
+                    }}
+                    title="Download Report"
+                  >
+                    📥 PDF
+                  </button>
                 </div>
               </div>
             ))

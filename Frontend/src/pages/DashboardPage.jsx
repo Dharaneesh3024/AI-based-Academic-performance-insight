@@ -46,6 +46,9 @@ const DashboardPage = () => {
   const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false);
   const [activeTab, setActiveTab] = useState("academic");
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [studyRoadmap, setStudyRoadmap] = useState(null);
+  const [isGeneratingRoadmap, setIsGeneratingRoadmap] = useState(false);
+  const [peerRankings, setPeerRankings] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -76,6 +79,16 @@ const DashboardPage = () => {
         setClassStats(res.data);
       })
       .catch((err) => console.error("Class Stats Error:", err));
+
+    // Fetch Peer Comparison
+    axios
+      .get("/api/students/analytics/peer-comparison", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then((res) => {
+        setPeerRankings(res.data);
+      })
+      .catch((err) => console.error("Peer Comparison Error:", err));
   }, []);
 
   useEffect(() => {
@@ -194,6 +207,22 @@ const DashboardPage = () => {
     }
   };
 
+  const handleGenerateRoadmap = async () => {
+    setIsGeneratingRoadmap(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post("/api/ai/study-roadmap", {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStudyRoadmap(res.data.roadmap);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to generate study roadmap");
+    } finally {
+      setIsGeneratingRoadmap(false);
+    }
+  };
+
   const barData = {
     labels: student.subjects.map((s) => s.name),
     datasets: [{
@@ -205,6 +234,10 @@ const DashboardPage = () => {
       borderRadius: 5,
     }]
   };
+
+  const bestSubject = [...student.subjects].sort((a, b) => b.marks - a.marks)[0];
+  const lowSubject = [...student.subjects].sort((a, b) => a.marks - b.marks)[0];
+  const summaryAvgMarks = (student.subjects.reduce((acc, s) => acc + s.marks, 0) / student.subjects.length).toFixed(1);
 
   const radarData = {
     labels: student.subjects.map((s) => s.name),
@@ -294,6 +327,34 @@ const DashboardPage = () => {
                   </div>
                   <p className="risk-statement">Status: <strong>{riskData.level}</strong></p>
                 </div>
+
+                {/* PEER COMPARISON INSIGHTS */}
+                {peerRankings.length > 0 && (
+                  <div className="peer-insights-ribbon">
+                    {peerRankings.filter(r => r.topPercentage <= 40).length > 0 ? (
+                      peerRankings.filter(r => r.topPercentage <= 40).map((rank, idx) => (
+                        <motion.div
+                          key={idx}
+                          className="peer-insight-tag"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 + idx * 0.1 }}
+                        >
+                          <span className="trophy">🏆</span> {rank.text}
+                        </motion.div>
+                      ))
+                    ) : (
+                      <motion.div
+                        className="peer-insight-tag motivation"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        <span className="sparkle">🚀</span> You're closer than you think! A bit more focus this week could land you in the top 40%.
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+
                 <ul className="insight-list">
                   {mlInsights.length > 0 ? (
                     mlInsights.map((rec, i) => (
@@ -317,6 +378,73 @@ const DashboardPage = () => {
                 <h3>Subject-wise Marks</h3>
                 <div className="chart-container">
                   <Bar data={barData} options={{ responsive: true, maintainAspectRatio: false }} />
+                </div>
+
+                <div className="performance-highlights">
+                  <div className="highlight-mini-card">
+                    <span className="mini-label">Best Subject</span>
+                    <span className="mini-value text-green">{bestSubject.name}</span>
+                    <span className="mini-subtext">{bestSubject.marks}% score</span>
+                  </div>
+                  <div className="highlight-mini-card">
+                    <span className="mini-label">Focus Needed</span>
+                    <span className="mini-value text-orange">{lowSubject.name}</span>
+                    <span className="mini-subtext">{lowSubject.marks}% score</span>
+                  </div>
+                  <div className="highlight-mini-card">
+                    <span className="mini-label">GPA Estimate</span>
+                    <span className="mini-value text-purple">{(summaryAvgMarks / 10).toFixed(2)}</span>
+                    <span className="mini-subtext">Based on {summaryAvgMarks}% avg</span>
+                  </div>
+                </div>
+              </motion.section>
+
+              {/* AI STUDY ROADMAP */}
+              <motion.section
+                className="grid-card roadmap-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+              >
+                <div className="roadmap-header">
+                  <h3><span className="sparkle">📚</span> AI Study Roadmap</h3>
+                  <button
+                    className={`generate-roadmap-btn ${isGeneratingRoadmap ? 'loading' : ''}`}
+                    onClick={handleGenerateRoadmap}
+                    disabled={isGeneratingRoadmap}
+                  >
+                    {isGeneratingRoadmap ? "Generating..." : (studyRoadmap ? "Regenerate Plan" : "Generate Plan")}
+                  </button>
+                </div>
+
+                <div className="roadmap-content">
+                  {isGeneratingRoadmap ? (
+                    <div className="roadmap-loading">
+                      <div className="roadmap-loader"></div>
+                      <p>Creating your personalized 4-week success path...</p>
+                    </div>
+                  ) : studyRoadmap ? (
+                    <div className="roadmap-timeline">
+                      {studyRoadmap.map((week, idx) => (
+                        <div key={idx} className="roadmap-week">
+                          <div className="week-number">Week {week.week}</div>
+                          <div className="week-details">
+                            <h4>{week.focus}</h4>
+                            <ul className="week-goals">
+                              {week.goals.map((goal, gi) => <li key={gi}>{goal}</li>)}
+                            </ul>
+                            <div className="week-tips">
+                              {week.tips.map((tip, ti) => <span key={ti} className="tip-tag">{tip}</span>)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="roadmap-placeholder">
+                      <p>Need a clear path to improvement? Generate a personalized week-by-week plan based on your academic data.</p>
+                    </div>
+                  )}
                 </div>
               </motion.section>
 
