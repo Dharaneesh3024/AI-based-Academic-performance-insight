@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import "./Navbar.css";
-
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
