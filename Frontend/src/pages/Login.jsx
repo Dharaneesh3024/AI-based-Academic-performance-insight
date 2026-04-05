@@ -58,7 +58,7 @@ const Login = () => {
           />
           <button type="submit">Login</button>
           <p>
-            Don’t have an account? <a href="/signup">Signup</a>
+           * No entry for new users. Please contact the administrator to create an account *
           </p>
         </form>
       </div>

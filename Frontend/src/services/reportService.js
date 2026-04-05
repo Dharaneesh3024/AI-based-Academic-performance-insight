@@ -67,10 +67,97 @@ export const generateStudentReport = (student) => {
     doc.text(`Average Marks: ${avgMarks}%`, 14, summaryY + 10);
     doc.text(`Overall Attendance: ${avgAtt}%`, 14, summaryY + 18);
 
+    // Technical Skills Section
+    if (student.skills && student.skills.length > 0) {
+        const skillsY = summaryY + 30;
+        doc.setFontSize(16);
+        doc.setTextColor(0);
+        doc.text("Technical Skills", 14, skillsY);
+
+        const skillRows = student.skills.map(skill => [skill.name, `${skill.level}%`]);
+        autoTable(doc, {
+            startY: skillsY + 5,
+            head: [["Skill", "Proficiency Level"]],
+            body: skillRows,
+            headStyles: { fillColor: [16, 185, 129] }, // Success green color
+            alternateRowStyles: { fillColor: [240, 253, 244] }
+        });
+    }
+
+    // Special Support Section
+    const hasSpecialSupport = (student.specialSupport?.classes?.length > 0) || (student.specialSupport?.assessments?.length > 0);
+    
+    if (hasSpecialSupport) {
+        // If we're near the bottom, add a new page
+        if (doc.lastAutoTable.finalY > 200) {
+            doc.addPage();
+            var currentY = 20;
+        } else {
+            var currentY = doc.lastAutoTable.finalY + 15;
+        }
+
+        doc.setFontSize(16);
+        doc.setTextColor(0);
+        doc.text("Special Support Tracking", 14, currentY);
+
+        // Additional Classes
+        if (student.specialSupport?.classes?.length > 0) {
+            doc.setFontSize(13);
+            doc.text("Additional Learning Sessions", 14, currentY + 10);
+            
+            const classRows = student.specialSupport.classes.map(c => [
+                new Date(c.dateTime).toLocaleDateString(),
+                c.subject,
+                c.topic,
+                c.attendance.charAt(0).toUpperCase() + c.attendance.slice(1)
+            ]);
+
+            autoTable(doc, {
+                startY: currentY + 15,
+                head: [["Date", "Subject", "Topic", "Status"]],
+                body: classRows,
+                headStyles: { fillColor: [245, 158, 11] }, // Amber color
+                alternateRowStyles: { fillColor: [255, 251, 235] }
+            });
+            currentY = doc.lastAutoTable.finalY + 10;
+        }
+
+        // Special Assessments
+        if (student.specialSupport?.assessments?.length > 0) {
+            if (currentY > 240) {
+                doc.addPage();
+                currentY = 20;
+            }
+            doc.setFontSize(13);
+            doc.text("Special Performance Assessments", 14, currentY + 5);
+
+            const assessmentRows = student.specialSupport.assessments.map(a => [
+                a.subject,
+                a.topic,
+                new Date(a.deadline).toLocaleDateString(),
+                a.status.charAt(0).toUpperCase() + a.status.slice(1),
+                a.score !== undefined ? `${a.score}%` : "N/A"
+            ]);
+
+            autoTable(doc, {
+                startY: currentY + 10,
+                head: [["Subject", "Topic", "Deadline", "Status", "Score"]],
+                body: assessmentRows,
+                headStyles: { fillColor: [239, 68, 68] }, // Red color
+                alternateRowStyles: { fillColor: [254, 242, 242] }
+            });
+        }
+    }
+
     // Footer
-    doc.setFontSize(10);
-    doc.setTextColor(150);
-    doc.text("Confidential Academic Report - For Faculty Use Only", 14, 285);
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(10);
+        doc.setTextColor(150);
+        doc.text(`Page ${i} of ${pageCount}`, 14, 285);
+        doc.text("Confidential Academic Report - For Faculty Use Only", 80, 285);
+    }
 
     // Save PDF
     doc.save(`Performance_Report_${student.rollNo}.pdf`);
