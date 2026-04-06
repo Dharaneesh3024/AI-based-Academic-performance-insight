@@ -18,7 +18,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/Frontend/$1"
+      "destination": "/Frontend/dist/index.html"
     }
   ]
 }
